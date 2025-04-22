@@ -369,7 +369,7 @@ function selectExperience(duration) {
   if (!category) {
     console.error("No category selected")
     // Optionally, redirect to home page or show an error message
-    window.location.href = "newHome.html"
+    window.location.href = "index.html"
     return
   }
 
@@ -391,7 +391,7 @@ function selectExperience(duration) {
     default:
       console.error("Invalid category:", category)
       // Optionally, redirect to home page or show an error message
-      window.location.href = "newHome.html"
+      window.location.href = "index.html"
       return
   }
 
@@ -400,7 +400,7 @@ function selectExperience(duration) {
 
 // Function to go back to the homepage
 function goBack() {
-  window.location.href = "newHome.html"
+  window.location.href = "index.html"
 }
 
 // ===== ABOUT PAGE CARD FLIP FUNCTIONS =====
