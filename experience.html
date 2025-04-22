@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experience - Disordered</title>
+    <link rel="icon" type="image/ico" href="./assets/favicon.ico">
+    <link rel="stylesheet" href="https://use.typekit.net/svn1zcp.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            color: white;
+        }
+
+        h1 {
+            display: none;
+        }
+
+        /* Video background */
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            cursor: pointer; /* Added cursor style */
+        }
+
+        #background-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Overlay for better text visibility */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent);
+        }
+
+        /* Controls */
+        .controls {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            z-index: 10;
+        }
+
+        .volume-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mute-button {
+            background-color: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .mute-button:hover {
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .volume-slider {
+            width: 96px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            border: none;
+        }
+
+        .exit-button {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            border: none;
+            color: black;
+            padding: 8px 24px;
+            border-radius: 24px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .exit-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Content */
+        .content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .content-inner {
+            text-align: center;
+            padding: 24px;
+            max-width: 800px;
+        }
+
+        .content-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 24px;
+        }
+
+        .content-description {
+            font-size: 24px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Icons */
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .content-title {
+                font-size: 36px;
+            }
+            
+            .content-description {
+                font-size: 18px;
+            }
+            
+            .volume-slider {
+                width: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-title {
+                font-size: 28px;
+            }
+            
+            .content-description {
+                font-size: 16px;
+            }
+            
+            .volume-slider {
+                width: 60px;
+            }
+            
+            .mute-button {
+                width: 36px;
+                height: 36px;
+            }
+        }
+
+        /* Add this new style for the play/pause indicator */
+        .play-pause-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none; /* Ensure it doesn't interfere with clicks/taps */
+        }
+
+        .play-pause-indicator.visible {
+            opacity: 1;
+        }
+
+        .play-pause-indicator svg {
+            width: 40px;
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-container" id="video-container">
+        <video id="background-video" autoplay loop muted playsinline>
+            <source id="video-source" src="" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Play/Pause Indicator -->
+    <div class="play-pause-indicator" id="play-pause-indicator">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+        </svg>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="volume-controls">
+            <button class="mute-button" id="mute-toggle" aria-label="Mute">
+                <!-- Volume Muted Icon -->
+                <svg class="icon" id="volume-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                    <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+                    <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
+                    <line x1="12" y1="19" x2="12" y2="23"></line>
+                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+            </button>
+            <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="50" aria-label="Volume control">
+        </div>
+        <a href="selectExperience.html" class="exit-button">EXIT</a>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <div class="content-inner">
+            <h1 class="content-title">Test</h1>
+            <p class="content-description"></p>
+        </div>
+    </div>
+
+    <audio id="audio" autoplay loop></audio>
+
+    <script>
+        // Get DOM elements
+        const video = document.getElementById('background-video');
+        const videoContainer = document.getElementById('video-container');
+        const muteToggle = document.getElementById('mute-toggle');
+        const volumeSlider = document.getElementById('volume-slider');
+        const volumeIcon = document.getElementById('volume-icon');
+        const playPauseIndicator = document.getElementById('play-pause-indicator');
+
+        // Set initial state
+        let isMuted = true;
+        let volume = 50;
+        let isPlaying = true;
+
+        // Volume icon SVGs
+        const volumeMutedIcon = `
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+                <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+                <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
+                <line x1="12" y1="19" x2="12" y2="23"></line>
+                <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+        `;
+        
+        const volumeOnIcon = `
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+        `;
+
+        // Play/Pause icons
+        const playIcon = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+            </svg>
+        `;
+
+        const pauseIcon = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="10" y1="15" x2="10" y2="9"></line>
+                <line x1="14" y1="15" x2="14" y2="9"></line>
+            </svg>
+        `;
+
+        // Toggle mute
+        muteToggle.addEventListener('click', () => {
+            isMuted = !isMuted;
+            video.muted = isMuted;
+            
+            // Update icon
+            if (isMuted) {
+                muteToggle.innerHTML = volumeMutedIcon;
+                muteToggle.setAttribute('aria-label', 'Unmute');
+            } else {
+                muteToggle.innerHTML = volumeOnIcon;
+                muteToggle.setAttribute('aria-label', 'Mute');
+            }
+        });
+
+        // Handle volume change
+        volumeSlider.addEventListener('input', (e) => {
+            volume = parseInt(e.target.value);
+            video.volume = volume / 100;
+            
+            // If volume is 0, mute the video
+            if (volume === 0) {
+                isMuted = true;
+                video.muted = true;
+                muteToggle.innerHTML = volumeMutedIcon;
+                muteToggle.setAttribute('aria-label', 'Unmute');
+            } else if (isMuted) {
+                // If volume is increased from 0, unmute
+                isMuted = false;
+                video.muted = false;
+                muteToggle.innerHTML = volumeOnIcon;
+                muteToggle.setAttribute('aria-label', 'Mute');
+            }
+        });
+
+        // Initialize video volume
+        video.volume = volume / 100;
+
+        // Function to toggle play/pause
+        function togglePlayPause() {
+            if (video.paused) {
+                video.paused();
+                isPlaying = false;
+                playPauseIndicator.innerHTML = pauseIcon;
+            } else {
+                video.play();
+                isPlaying = true;
+                playPauseIndicator.innerHTML = playIcon;
+            }
+            
+            // Show the indicator
+            playPauseIndicator.classList.add('visible');
+            
+            // Hide the indicator after 1 second
+            setTimeout(() => {
+                playPauseIndicator.classList.remove('visible');
+            }, 1000);
+        }
+
+        // Add click/tap event listener to the video container
+        videoContainer.addEventListener('click', togglePlayPause);
+
+        // Add touch event listeners for mobile devices
+        videoContainer.addEventListener('touchstart', (e) => {
+            // Prevent default touch behavior
+            e.preventDefault();
+        });
+
+        videoContainer.addEventListener('touchend', (e) => {
+            // Prevent default touch behavior
+            e.preventDefault();
+            togglePlayPause();
+        });
+
+        // Keyboard accessibility
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); // Prevent scrolling on spacebar press
+                togglePlayPause();
+            }
+        });
+
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Get category and duration from URL
+        const category = getUrlParameter('category') || 'default';
+        const duration = getUrlParameter('duration') || '5';
+
+        // Map of video files for each category and duration
+        const videoFiles = {
+            'recharge': {
+                '5': 'Recharge_2min.mp4',
+                '10': 'recharge_10min.mp4',
+                '15': 'recharge_15min.mp4'
+            },
+            'reassurance': {
+                '5': 'reassurance-2min.mp4',
+                '10': 'reassurance_10min.mp4',
+                '15': 'reassurance_15min.mp4'
+            },
+            'relax': {
+                '5': 'final_composition_1.mp4',
+                '10': 'relax_10min.mp4',
+                '15': 'relax_15min.mp4'
+            },
+            'grounding': {
+                '5': 'Final_comp.mp4',
+                '10': 'grounding_10min.mp4',
+                '15': 'grounding_15min.mp4'
+            },
+            'default': {
+                '5': 'final_composition_1.mp4',
+                '10': 'final_composition_1.mp4',
+                '15': 'final_composition_1.mp4'
+            }
+        };
+
+        // Set the video source based on category and duration
+        const videoSource = document.getElementById('video-source');
+        if (videoFiles[category] && videoFiles[category][duration]) {
+            videoSource.src = videoFiles[category][duration];
+        } else {
+            videoSource.src = 'final_composition_1.mp4'; // Default fallback
+        }
+
+        // Load the video
+        video.load();
+
+        // Map of audio files for each category
+        const audioFiles = {
+            'recharge': 'recharge_soundscape.wav',
+            'reassurance': 'reassurance_soundscape.wav',
+            'relax': 'relax_soundscape.wav',
+            'grounding': 'grounding_soundscape.wav',
+            'default': 'testSoundscape.wav'
+        };
+
+        // Set the audio source based on category
+        const audio = document.getElementById('audio');
+        if (audioFiles[category]) {
+            audio.src = audioFiles[category];
+        } else {
+            audio.src = 'testSoundscape.wav'; // Default fallback
+        }
+    </script>
+    
+</body>
+</html>
+

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Experience - Disordered</title>
+    <link rel="icon" type="image/ico" href="./assets/favicon.ico">
+    <link rel="stylesheet" href="https://use.typekit.net/svn1zcp.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="select-experience-page">
+    <div class="container-fluid min-vh-100 d-flex flex-column justify-content-center align-items-center">
+        <div class="exit-button" onclick="goBack()"></div>
+        <h1 class="text-center mb-5">Select Your Experience</h1>
+        <div class="row justify-content-center">
+          <div class="col-md-4 mb-4">
+            <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">2 Minutes</h5>
+                        <p class="card-text">A quick mindfulness session</p>
+                        <button class="btn btn-primary duration-btn" data-duration="5" onclick="startExperience.call(this)">Start</button>
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+                function startExperience() {
+                    const duration = this.getAttribute('data-duration');
+                    const category = new URLSearchParams(window.location.search).get('category') || 'default';
+                    window.location.href = `experience.html?duration=${duration}&category=${category}`;
+                }
+            </script>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">5 Minutes</h5>
+                        <p class="card-text">A balanced mindfulness practice</p>
+                        <button class="btn btn-primary duration-btn" data-duration="10" onclick="startExperience.call(this)">Start</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">7 Minutes</h5>
+                        <p class="card-text">An immersive mindfulness experience</p>
+                        <button class="btn btn-primary duration-btn" data-duration="15" onclick="startExperience.call(this)">Start</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
